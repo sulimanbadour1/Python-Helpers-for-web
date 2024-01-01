@@ -1,2 +1,3 @@
 # Python-to-Access-Web-Data
-# Series of exercises and code to fetch different types of web-data using python.
+
+Welcome to the Python-to-Access-Web-Data series! This repository contains a collection of exercises and Python code aimed at fetching various types of web data using Python.
