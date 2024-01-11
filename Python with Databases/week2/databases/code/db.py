@@ -1,4 +1,5 @@
 import sqlite3
+import re
 
 conn = sqlite3.connect("emaildb.sqlite")
 cur = conn.cursor()
@@ -17,8 +18,14 @@ fh = open(fname)
 for line in fh:
     if not line.startswith("From: "):
         continue
+
     pieces = line.split()
-    org = pieces[1]
+    email = pieces[1]
+    # Extract the domain name from the email address
+    org = re.findall("@(\S+)", email)[0]
+    print(org)
+    # Insert or update the email count for the domain
+
     cur.execute("SELECT count FROM Counts WHERE org = ? ", (org,))
     row = cur.fetchone()
     if row is None:
@@ -30,10 +37,11 @@ for line in fh:
     else:
         cur.execute("UPDATE Counts SET count = count + 1 WHERE org = ?", (org,))
 
+# Move the commit operation outside the loop for optimization
 conn.commit()
-# https://www.sqlite.org/lang_select.html
-sqlstr = "SELECT org, count FROM Counts ORDER BY count DESC"
 
+# Retrieve and print the top 10 org addresses by count
+sqlstr = "SELECT org, count FROM Counts ORDER BY count DESC LIMIT 10"
 for row in cur.execute(sqlstr):
     print(str(row[0]), row[1])
 
